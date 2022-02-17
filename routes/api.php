@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return "Hello API";
 });
+
+// Events
+Route::get('/view-event',[EventController::class,'showEvent']);
+Route::post('/add-event',[EventController::class,'storeEvent']);
