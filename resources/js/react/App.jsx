@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import {Redirect} from "@shopify/app-bridge/actions";
 import {authenticatedFetch} from "@shopify/app-bridge-utils"
 import {ApolloClient, HttpLink, InMemoryCache} from '@apollo/client';
 import {ApolloProvider} from '@apollo/client/react';
-import {AppProvider} from "@shopify/polaris";
+import {AppProvider, Button} from "@shopify/polaris";
 import translations from "@shopify/polaris/locales/en.json";
 import '@shopify/polaris/dist/styles.css';
 import PageLayout from "./components/PageLayout";
@@ -13,6 +13,7 @@ import {Provider, useAppBridge} from '@shopify/app-bridge-react';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import ClientRouter from "./components/ClientRouter";
 import AppNavigation from "./components/AppNavigation";
+import { EventPage } from './components/EventPage';
 
 function userLoggedInFetch(app) {
     const fetchFunction = authenticatedFetch(app);
@@ -50,9 +51,10 @@ function AppBridgeApolloProvider({children}) {
     );
 }
 
-function ExamplePage() {
-    return <div>Example Page</div>
-}
+useEffect(()=>{
+
+});
+
 function App({shop, host, apiKey}) {
     const config = {apiKey: apiKey, shopOrigin: shop, host: host, forceRedirect: true};
 
@@ -65,7 +67,7 @@ function App({shop, host, apiKey}) {
                         <AppNavigation/>
                         <PageLayout>
                             <Switch>
-                                <Route path="/example" component={ExamplePage}/>
+                                <Route path="/event" component={EventPage}/>
                                 <Route path="/" component={ProductsPage}/>
                             </Switch>
                         </PageLayout>
