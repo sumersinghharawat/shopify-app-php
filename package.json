@@ -18,6 +18,7 @@
         "@shopify/app-bridge-utils": "^2.0.2",
         "@shopify/polaris": "^6.4.0",
         "axios": "^0.21",
+        "google-timezones-json": "^1.0.2",
         "graphql": "^15.5.0",
         "laravel-mix": "^6.0.42",
         "lodash": "^4.17.19",

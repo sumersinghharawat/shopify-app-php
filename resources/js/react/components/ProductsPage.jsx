@@ -31,7 +31,7 @@ function ProductsPage() {
         </Banner>
     );
 
-    return <ProductsList data={data}/>;
+    return <div>{data | JSON }</div>;
 }
 
 export default ProductsPage;

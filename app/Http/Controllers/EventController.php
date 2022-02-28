@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
@@ -45,12 +46,54 @@ class EventController extends Controller
     public function storeEvent(Request $request)
     {
         //
-        $validated = $request->validate([
-            'title' => 'required|unique:posts|max:255',
-            'body' => 'required',
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required| unique:events',
+            'store_domain' => 'required',
+            'duration_hours' => 'required',
+            'duration_minute' => 'required',
+            'start_date' => 'required',
+            'timezone' => 'required',
+            'event_schedule' => 'required',
+            'weekly_schedule' => 'required'
         ]);
 
-        return response()->json($validated);
+        if ($validator->fails()) {
+            return response()->json([
+                'response_code' => 422,
+                'message' => 'The given data was invalid.',
+                'errors' => $validator->errors(),
+                'data' => (object)[]
+            ], 422);
+        }
+
+        $eventData = [
+            'product_id' => $request->product_id,
+            'store_domain' => $request->store_domain,
+            'duration_hours' => $request->duration_hours,
+            'duration_minute' => $request->duration_minute,
+            'start_date' => $request->start_date,
+            'timezone' => $request->timezone,
+            'event_schedule' => $request->event_schedule,
+            'weekly_schedule' => $request->weekly_schedule
+        ];
+
+        // dd($eventData);
+        $data = Event::create($eventData);
+        if($data){
+            return response()->json([
+                'response_code' => 201,
+                'message' => 'Event Created.',
+                'errors' => (Object)[],
+                'data' => $request->all()
+            ], 201);
+        }else{
+            return response()->json([
+                'response_code' => 500,
+                'message' => 'Event not Created.',
+                'errors' => "Some this wrong!",
+                'data' => (Object)[]
+            ], 500);
+        }
     }
 
     /**
@@ -59,10 +102,23 @@ class EventController extends Controller
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function showEvent(Event $event)
+    public function showEvent(Event $event,$id="")
     {
         //
-        return response()->json($event);
+        if($id != ""){
+            return response()->json([
+                'response_code' => 200,
+                'message' => 'Curret Event.',
+                'errors' => (Object)[],
+                'data' => $event->where("product_id",$id)->first()
+            ], 200);
+        }
+        return response()->json([
+            'response_code' => 200,
+            'message' => 'Curret Event.',
+            'errors' => (Object)[],
+            'data' => $event->all()
+        ], 200);
     }
 
     /**

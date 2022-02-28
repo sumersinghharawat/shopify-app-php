@@ -1,7 +1,7 @@
 import {Avatar, ResourceItem, ResourceList, TextStyle} from "@shopify/polaris";
 import React from "react";
 
-export function ProductsList({data}) {
+export function ProductsList({data, getId}) {
 
     const products = data.products.edges.map((edge) => {
         return {
@@ -14,9 +14,8 @@ export function ProductsList({data}) {
         items={products}
         renderItem={({id, title}) => {
             return (
-                <ResourceItem
-                    onClick={(id)=>{
-                        console.log(id);
+                <ResourceItem onClick={(id)=>{
+                        getId(id);
                     }}
                     id={id}
                     accessibilityLabel={`View details for ${title}`}

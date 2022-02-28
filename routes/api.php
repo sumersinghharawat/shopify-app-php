@@ -21,4 +21,5 @@ Route::get('/', function () {
 
 // Events
 Route::get('/view-event',[EventController::class,'showEvent']);
+Route::get('/view-event/{id}',[EventController::class,'showEvent']);
 Route::post('/add-event',[EventController::class,'storeEvent']);

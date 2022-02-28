@@ -15,17 +15,19 @@ class CreateEventsTable extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->text("product_id");
+            $table->text("store_domain");
             $table->integer("duration_hours");
             $table->integer("duration_minute");
-            $table->date("start_date");
-            $table->date("end_date");
+            $table->string("start_date");
+            $table->string("end_date")->nullable();
             $table->string("timezone");
-            $table->date("event_schedule");
-            $table->text("location");
-            $table->text("address");
-            $table->text("note");
+            $table->string("event_schedule");
+            $table->text("location")->nullable();
+            $table->text("address")->nullable();
+            $table->text("note")->nullable();
             $table->json("weekly_schedule");
-            $table->integer("status");
+            $table->integer("status")->default(0);
             $table->timestamps();
         });
     }

@@ -51,12 +51,12 @@ function AppBridgeApolloProvider({children}) {
     );
 }
 
-useEffect(()=>{
-
-});
-
 function App({shop, host, apiKey}) {
     const config = {apiKey: apiKey, shopOrigin: shop, host: host, forceRedirect: true};
+
+    useEffect(()=>{
+        console.log("Tested");
+    });
 
     return (
         <BrowserRouter>
