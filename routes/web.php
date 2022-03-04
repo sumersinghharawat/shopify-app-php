@@ -30,6 +30,16 @@ Route::fallback(function (Request $request) {
     $host = $request->query('host');
     $appInstalled = Session::where('shop', $shop)->exists();
     if ($appInstalled) {
+
+        $session = Session::where('shop', $shop)->get();
+
+        $request->session()->put('id',$session[0]->id);
+        $request->session()->put('session_id',$session[0]->session_id);
+        $request->session()->put('shop',$session[0]->shop);
+        $request->session()->put('is_online',$session[0]->is_online);
+        $request->session()->put('state',$session[0]->state);
+        $request->session()->put('access_token',$session[0]->access_token);
+
         return view('react', [
             'shop' => $shop,
             'host' => $host,

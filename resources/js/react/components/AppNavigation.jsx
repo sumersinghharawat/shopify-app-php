@@ -17,8 +17,14 @@ function AppNavigation() {
         label: 'Event',
         destination: '/event',
     });
+    
+    const form = AppLink.create(app, {
+        label: 'Form',
+        destination: '/form',
+    });
+
     const navigationMenu = NavigationMenu.create(app, {
-        items: [home, event],
+        items: [home, event, form],
     });
 
     switch (location.pathname) {
@@ -27,6 +33,9 @@ function AppNavigation() {
             break;
         case "/event":
             navigationMenu.set({active: event});
+            break;
+        case "/form":
+            navigationMenu.set({active: form});
             break;
         default:
             navigationMenu.set({active: undefined});

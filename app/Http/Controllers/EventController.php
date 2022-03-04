@@ -45,55 +45,62 @@ class EventController extends Controller
      */
     public function storeEvent(Request $request)
     {
+        return response()->json([
+                    'response_code' => 200,
+                    'message' => 'Event not Created.',
+                    'errors' => "Some this wrong!",
+                    'data' => $request->all()
+                ], 200);
+
         //
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required| unique:events',
-            'store_domain' => 'required',
-            'duration_hours' => 'required',
-            'duration_minute' => 'required',
-            'start_date' => 'required',
-            'timezone' => 'required',
-            'event_schedule' => 'required',
-            'weekly_schedule' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'product_id' => 'required| unique:events',
+        //     'store_domain' => 'required',
+        //     'duration_hours' => 'required',
+        //     'duration_minute' => 'required',
+        //     'start_date' => 'required',
+        //     'timezone' => 'required',
+        //     'event_schedule' => 'required',
+        //     'weekly_schedule' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'response_code' => 422,
-                'message' => 'The given data was invalid.',
-                'errors' => $validator->errors(),
-                'data' => (object)[]
-            ], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'response_code' => 422,
+        //         'message' => 'The given data was invalid.',
+        //         'errors' => $validator->errors(),
+        //         'data' => (object)[]
+        //     ], 422);
+        // }
 
-        $eventData = [
-            'product_id' => $request->product_id,
-            'store_domain' => $request->store_domain,
-            'duration_hours' => $request->duration_hours,
-            'duration_minute' => $request->duration_minute,
-            'start_date' => $request->start_date,
-            'timezone' => $request->timezone,
-            'event_schedule' => $request->event_schedule,
-            'weekly_schedule' => $request->weekly_schedule
-        ];
+        // $eventData = [
+        //     'product_id' => $request->product_id,
+        //     'store_domain' => $request->store_domain,
+        //     'duration_hours' => $request->duration_hours,
+        //     'duration_minute' => $request->duration_minute,
+        //     'start_date' => $request->start_date,
+        //     'timezone' => $request->timezone,
+        //     'event_schedule' => $request->event_schedule,
+        //     'weekly_schedule' => $request->weekly_schedule
+        // ];
 
-        // dd($eventData);
-        $data = Event::create($eventData);
-        if($data){
-            return response()->json([
-                'response_code' => 201,
-                'message' => 'Event Created.',
-                'errors' => (Object)[],
-                'data' => $request->all()
-            ], 201);
-        }else{
-            return response()->json([
-                'response_code' => 500,
-                'message' => 'Event not Created.',
-                'errors' => "Some this wrong!",
-                'data' => (Object)[]
-            ], 500);
-        }
+        // // dd($eventData);
+        // $data = Event::create($eventData);
+        // if($data){
+        //     return response()->json([
+        //         'response_code' => 201,
+        //         'message' => 'Event Created.',
+        //         'errors' => (Object)[],
+        //         'data' => $request->all()
+        //     ], 201);
+        // }else{
+        //     return response()->json([
+        //         'response_code' => 500,
+        //         'message' => 'Event not Created.',
+        //         'errors' => "Some this wrong!",
+        //         'data' => (Object)[]
+        //     ], 500);
+        // }
     }
 
     /**

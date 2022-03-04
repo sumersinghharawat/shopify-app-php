@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,7 @@ Route::get('/', function () {
 Route::get('/view-event',[EventController::class,'showEvent']);
 Route::get('/view-event/{id}',[EventController::class,'showEvent']);
 Route::post('/add-event',[EventController::class,'storeEvent']);
+
+// Install theme
+
+Route::get('/install-app',[SettingController::class,'configureTheme'])->middleware('shopify.auth');

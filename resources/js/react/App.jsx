@@ -8,12 +8,13 @@ import {AppProvider, Button} from "@shopify/polaris";
 import translations from "@shopify/polaris/locales/en.json";
 import '@shopify/polaris/dist/styles.css';
 import PageLayout from "./components/PageLayout";
-import ProductsPage from "./components/ProductsPage";
 import {Provider, useAppBridge} from '@shopify/app-bridge-react';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import ClientRouter from "./components/ClientRouter";
 import AppNavigation from "./components/AppNavigation";
 import { EventPage } from './components/EventPage';
+import HomePage from './components/HomePage';
+import { FormPage } from './components/Form/FormPage';
 
 function userLoggedInFetch(app) {
     const fetchFunction = authenticatedFetch(app);
@@ -37,7 +38,7 @@ function AppBridgeApolloProvider({children}) {
     const app = useAppBridge();
     const client = new ApolloClient({
         link: new HttpLink({
-            credentials: 'same-origin',
+            credentials: 'include',
             fetch: userLoggedInFetch(app),
             uri: '/graphql'
         }),
@@ -54,6 +55,14 @@ function AppBridgeApolloProvider({children}) {
 function App({shop, host, apiKey}) {
     const config = {apiKey: apiKey, shopOrigin: shop, host: host, forceRedirect: true};
 
+    console.log(apiKey);
+    console.log(shop);
+    console.log(host);
+
+    localStorage.setItem("accessToken",apiKey);
+    localStorage.setItem("accessShop",shop);
+    localStorage.setItem("accessHost",host);
+
     useEffect(()=>{
         console.log("Tested");
     });
@@ -68,7 +77,8 @@ function App({shop, host, apiKey}) {
                         <PageLayout>
                             <Switch>
                                 <Route path="/event" component={EventPage}/>
-                                <Route path="/" component={ProductsPage}/>
+                                <Route path="/form" component={FormPage}/>
+                                <Route path="/" component={HomePage}/>
                             </Switch>
                         </PageLayout>
                     </AppBridgeApolloProvider>

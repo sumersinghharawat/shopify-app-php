@@ -1,23 +1,31 @@
-
-import { Card, DataTable } from "@shopify/polaris";
+import { gql, useQuery } from "@apollo/client";
+import { Banner, Card, DataTable } from "@shopify/polaris";
+import {Loading} from '@shopify/app-bridge-react';
 import axios from "axios";
 import React, { useCallback, useState } from "react";
+import { useEffect } from "react";
 
 
 
-export const ViewEvent = () =>{
+export const ViewEvent = () => {
 
-    const {allEvent,setAllEvent} = useState({});
+    const [allEvents,setAllEvents] = useState('');
 
-    axios.get('/api/view-event').then((res)=>{
-        // console.log(res);
-        setAllEvent(res);
-    }).catch((err)=>{
-        console.log(err);
-    });
+    useEffect(()=>{
+
+
+        axios.get('/api/view-event').then((res)=>{
+            console.log(res.data.data);
+            setAllEvents(res);
+        }).catch((err)=>{
+            console.log(err);
+        });
+
+    },[]);
+
 
     const rows = [
-        ['Emerald Silk Gown', '$875.00', 124689],
+        ['Dummy Product', <img style={{width:"100px"}} src='https://cdn.shopify.com/s/files/1/0627/0143/7175/products/icon_bookings-6e5806e6.png?v=1645045463'/>, "12$"],
     ];
 
     return (<Card>
@@ -25,7 +33,7 @@ export const ViewEvent = () =>{
             columnContentTypes={[
                 'text',
                 'text',
-                'numeric'
+                'text'
             ]}
             headings={[
                 'Product',

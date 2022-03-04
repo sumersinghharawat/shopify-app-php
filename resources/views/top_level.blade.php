@@ -15,10 +15,13 @@
                 const app = createApp({
                     apiKey: "{{$apiKey}}",
                     shopOrigin: "{{$shop}}",
+                    forceRedirect: false
                 });
-            
+
                 const redirect = Redirect.create(app);
-                
+
+                console.log(app);
+
                 redirect.dispatch(Redirect.Action.REMOTE, 'https://{{$hostName}}/login/toplevel?shop={{$shop}}');
             }
         });

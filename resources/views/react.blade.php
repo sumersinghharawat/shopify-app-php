@@ -6,7 +6,7 @@
 <body>
 
 <div id="app" data-shop="{{$shop}}" data-host="{{$host}}" data-api-key="{{$apiKey}}"></div>
+123
 <script src="{{ asset('js/app.js') }}"></script>
-
 </body>
 </html>
