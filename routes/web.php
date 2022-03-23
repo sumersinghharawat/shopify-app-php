@@ -3,6 +3,7 @@
 use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Shopify\Auth\OAuth;
@@ -25,10 +26,24 @@ use Shopify\Webhooks\Topics;
 |
 */
 
+// Route::get('/login', function () {
+//     if (Auth::user()) {
+//         return redirect()->route('home');
+//     }
+// })->name('login');
+
+
 Route::fallback(function (Request $request) {
-    $shop = Utils::sanitizeShopDomain($request->query('shop'));
-    $host = $request->query('host');
-    $appInstalled = Session::where('shop', $shop)->exists();
+    try {
+        //code...
+        $shop = Utils::sanitizeShopDomain($request->query('shop'));
+        $host = $request->query('host');
+        $appInstalled = Session::where('shop', $shop)->exists();
+    } catch (\Throwable $th) {
+        // throw $th;
+        return response()->view('login', ['error' => 'Please enter your myShopify domain to continue.']);
+
+    }
     if ($appInstalled) {
 
         $session = Session::where('shop', $shop)->get();
@@ -64,8 +79,13 @@ Route::get('/login/toplevel', function (Request $request, Response $response) {
 });
 
 Route::get('/login', function (Request $request) {
-    $shop = Utils::sanitizeShopDomain($request->query('shop'));
-
+    try {
+        //code...
+        $shop = Utils::sanitizeShopDomain($request->query('shop'));
+    } catch (\Throwable $th) {
+        // throw $th;
+        return response()->view('login', ['error' => 'Please enter your myShopify domain to continue.']);
+    }
     if (!$request->hasCookie('shopify_top_level_oauth')) {
         return redirect("/login/toplevel?shop=$shop");
     }
@@ -77,6 +97,7 @@ Route::get('/login', function (Request $request) {
         ['App\Lib\CookieHandler', 'saveShopifyCookie'],
     );
 
+    // return view('login');
     return redirect($installUrl);
 });
 

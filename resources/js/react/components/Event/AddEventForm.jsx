@@ -17,6 +17,7 @@ export const AddEventForm = (productId) => {
     let product_Id = (productId.id.split("/"))[4];
 
     const [selectedHours, setSelectedHours] = useState('Select Hours');
+    const [formDomain, setFormDomain] = useState('');
     const [selectedHoursError, setSelectedHoursError] = useState('');
 
 
@@ -122,7 +123,12 @@ export const AddEventForm = (productId) => {
 
         useEffect(()=>{
 
-
+            let config = localStorage.getItem("config");
+            
+            config = config?JSON.parse(config):'';
+            if(config){
+                console.log(config);
+            }
             axios.get(`/api/view-event/${product_Id}`).then((res)=>{
                 if(res.data.length != 0 && res.data.length != undefined){
                     setEventData(res);
@@ -137,9 +143,7 @@ export const AddEventForm = (productId) => {
             });
         },[]);
 
-// Duration
-
-
+        // Duration
         const Duration = () => {
 
                 return <div style={{display:"flex",flexDirection:"row"}}>
@@ -164,6 +168,10 @@ export const AddEventForm = (productId) => {
         const [selectedWeeklySchedule,setSelectedWeeklySchedule] = useState({});
         // Location
         const [eventLocation,setEventLocation] = useState('');
+        // Address
+        const [eventAddress,setEventAddress] = useState('');
+        // Note
+        const [eventNote,setEventNote] = useState('');
 
         const handleChangeInvitee = useCallback(
         (_checked, newValueInvitee) => {setValueInvitee(newValueInvitee);},
@@ -444,9 +452,9 @@ export const AddEventForm = (productId) => {
                     <strong>Location</strong>
                     <TextField label="" onChange={(e) => { setEventLocation(e.target.value); }} value={eventLocation} />
                     <strong>Address</strong>
-                    <TextField label="" onChange={(e) => { setEventLocation(e.target.value); }} value={eventLocation} />
+                    <TextField label="" onChange={(e) => { setEventAddress(e.target.value); }} value={eventAddress} />
                     <strong>Note</strong>
-                    <TextField label="" onChange={(e) => { setEventLocation(e.target.value); }} value={eventLocation} />
+                    <TextField label="" onChange={(e) => { setEventNote(e.target.value); }} value={eventNote} />
 
                 </FormLayout>
                 <div style={{margin: "2% 0%"}}>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
     <head>
-        <title>Shopify PHP App</title>
+        <title>Event booking app</title>
         <script src="https://unpkg.com/@shopify/app-bridge@2"></script>
         <script>
         document.addEventListener('DOMContentLoaded', function() {

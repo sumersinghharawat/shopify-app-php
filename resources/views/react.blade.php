@@ -6,7 +6,9 @@
 <body>
 
 <div id="app" data-shop="{{$shop}}" data-host="{{$host}}" data-api-key="{{$apiKey}}"></div>
-123
+<input type="hidden" id="apiKey" value="{{ config('shopify-app.api_key') }}">
+<input type="hidden" id="shopOrigin" value="{{session('shopify_domain')}}">
+
 <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

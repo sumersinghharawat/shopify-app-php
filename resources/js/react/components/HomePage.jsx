@@ -1,14 +1,14 @@
-import {gql, useQuery} from '@apollo/client';
-import {Banner, Button, Card, Heading, Layout, Page} from '@shopify/polaris';
-import React from 'react';
+import {ApolloProvider, gql, useQuery} from '@apollo/client';
+import {Banner, Button, Card, Frame, Heading, Layout, Modal, Page, Spinner, TextContainer, Toast} from '@shopify/polaris';
+import React, { useCallback } from 'react';
 import {ProductsList} from "./ProductsList";
-import {Loading} from '@shopify/app-bridge-react';
+import {Loading, useAppBridge} from '@shopify/app-bridge-react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import ServiceRequest from '../service/ServiceRequest';
-
-
+import { createApp } from '@shopify/app-bridge';
+import { getSessionToken } from '@shopify/app-bridge-utils';
 
 export default function HomePage() {
     const request = new ServiceRequest;
@@ -25,18 +25,47 @@ export default function HomePage() {
       }
     }`;
 
-    const [buttonLoading, setButtonLoading] = useState(true);
+    const [activeToastr, setActiveToastr] = useState(false);
+
+    const toggleActiveToastr = useCallback(() => setActiveToastr((active) => !active), []);
+
+    const [buttonLoading, setButtonLoading] = useState(false);
     const [themeIntegration, setThemeIntegration] = useState('Enabled');
+    const [themeIntegrationLabel, setThemeIntegrationLabel] = useState(true);
     const [themeIntegrationApp, setThemeIntegrationApp] = useState('Enable App integration with theme.');
 
     const {loading, error, data} = useQuery(PRODUCTS_QUERY);
 
-
     useEffect(()=>{
+      let config = localStorage.getItem("config");
+      config = config?JSON.parse(config):'';
+      if(config){
+        const app = createApp(config);
+        getSessionToken(app).then((res)=>{
+            setButtonLoading(true);
+            // console.log(res);
+            let token = res;
+              axios.get('/api/check-install-app',{ 
+                headers: {"Authorization" : `Bearer ${token}`}
+              }).then((res)=>{
+                // console.log(res);
+                if(res.data.data){
+                  setThemeIntegrationLabel(false);
+                  setThemeIntegration("Disabled");
+                }else{
+                  setThemeIntegrationLabel(true);
+                  setThemeIntegration("Enabled");
+                }
+                setButtonLoading(false);
+              }).catch((err)=>{
+                console.log(err);
+              });
+            }).catch((err)=>{
+              console.log(err);
+            });
+      }
         setButtonLoading(false);
-
-        // console.log(request.getShopifyData('/admin/api/2022-01/products.json'));
-
+        // console.log(useAppBridge);
     },[])
 
     if (loading) return (
@@ -49,15 +78,90 @@ export default function HomePage() {
         </Banner>
     );
 
+    const IntegrationTheme = () => {
+      const [active, setActive] = useState(false);
 
-    console.log(themeIntegration);
+      const handleChange = useCallback(() => setActive(!active), [active]);
+
+      const activator = <Button onClick={handleChange} primary={themeIntegrationLabel} destructive={!themeIntegrationLabel}>{themeIntegration}</Button>;
+      let title = "Do you want to " +themeIntegration+ "?"
+      return (
+        <div>
+          {buttonLoading && <Spinner accessibilityLabel="Spinner example" size="large" />}
+          {!buttonLoading &&
+          <Modal
+            activator={activator}
+            open={active}
+            onClose={handleChange}
+            title={title.toString()}
+            primaryAction={{
+              content: 'Change',
+              onAction: configureTheme,
+            }}
+            secondaryActions={[
+              {
+                content: 'Cancel',
+                onAction: handleChange,
+              },
+            ]}
+          >
+            {/* <Modal.Section>
+              <TextContainer>
+                <p>
+                  
+                </p>
+              </TextContainer>
+            </Modal.Section> */}
+          </Modal>}
+        </div>
+      );
+    }
+
+    const toastMarkup = activeToastr ? (
+      <Toast content="Theme updated" onDismiss={toggleActiveToastr} />
+    ) : null;
+
+    const configureTheme = () => {
+      
+      let config = localStorage.getItem("config");
+      config = config?JSON.parse(config):'';
+      if(config){
+        const app = createApp(config);
+        getSessionToken(app).then((res)=>{
+            setButtonLoading(true);
+            // console.log(res);
+            let token = res;
+            
+            axios.post('/api/install-app',
+            {'status':themeIntegration},
+            { 
+              headers: {"Authorization" : `Bearer ${token}`}
+            }).then((res)=>{
+              // console.log(res.data.data.message);
+              setActiveToastr(true);
+              setButtonLoading(false);
+              setThemeIntegrationLabel(!themeIntegrationLabel);
+              setThemeIntegration(themeIntegration=='Enabled'?'Disabled':'Enabled');
+            }).catch((err)=>{
+              console.log(err);
+            });
+        }).catch((err)=>{
+            console.log(err);
+        });
+        
+      }
+
+
+      console.log("submit");
+    };
 
     return (
+      <Frame>
     <Page title="Dashboard">
       <div>
           <div style={{display:"flex",justifyContent: "flex-end",alignItems: "center",background: "#f6f6f7",padding: "1%",borderRadius: "5px"}}>
               <p style={{paddingRight:"2%"}}>{themeIntegrationApp}</p>
-              <Button loading={buttonLoading}>{themeIntegration}</Button>
+              <IntegrationTheme />
           </div>
       </div>
       <div style={{margin:"2% 0%"}}>
@@ -99,5 +203,6 @@ export default function HomePage() {
           </Layout.Section>
         </Layout>
         </div>
-        </Page>);
+        {toastMarkup}
+        </Page></Frame>);
 }

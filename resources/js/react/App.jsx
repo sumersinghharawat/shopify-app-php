@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import {Redirect} from "@shopify/app-bridge/actions";
-import {authenticatedFetch} from "@shopify/app-bridge-utils"
+import {Redirect, SessionToken} from "@shopify/app-bridge/actions";
+import {authenticatedFetch, getSessionToken} from "@shopify/app-bridge-utils"
 import {ApolloClient, HttpLink, InMemoryCache} from '@apollo/client';
 import {ApolloProvider} from '@apollo/client/react';
 import {AppProvider, Button} from "@shopify/polaris";
@@ -15,6 +15,9 @@ import AppNavigation from "./components/AppNavigation";
 import { EventPage } from './components/EventPage';
 import HomePage from './components/HomePage';
 import { FormPage } from './components/Form/FormPage';
+import { createApp } from '@shopify/app-bridge';
+import { AddEventForm } from './components/Event/AddEventForm';
+import AddFormPage from './components/Form/AddFormPage';
 
 function userLoggedInFetch(app) {
     const fetchFunction = authenticatedFetch(app);
@@ -36,6 +39,7 @@ function userLoggedInFetch(app) {
 
 function AppBridgeApolloProvider({children}) {
     const app = useAppBridge();
+    
     const client = new ApolloClient({
         link: new HttpLink({
             credentials: 'include',
@@ -54,14 +58,7 @@ function AppBridgeApolloProvider({children}) {
 
 function App({shop, host, apiKey}) {
     const config = {apiKey: apiKey, shopOrigin: shop, host: host, forceRedirect: true};
-
-    console.log(apiKey);
-    console.log(shop);
-    console.log(host);
-
-    localStorage.setItem("accessToken",apiKey);
-    localStorage.setItem("accessShop",shop);
-    localStorage.setItem("accessHost",host);
+    localStorage.setItem('config',JSON.stringify(config));
 
     useEffect(()=>{
         console.log("Tested");
@@ -78,6 +75,8 @@ function App({shop, host, apiKey}) {
                             <Switch>
                                 <Route path="/event" component={EventPage}/>
                                 <Route path="/form" component={FormPage}/>
+                                <Route path="/add-form/:id" component={AddFormPage}/>
+                                <Route path="/add-form" component={AddFormPage}/>
                                 <Route path="/" component={HomePage}/>
                             </Switch>
                         </PageLayout>

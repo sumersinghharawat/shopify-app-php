@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class setting extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['shop_id','shop_domain','activated'];
+
 }
