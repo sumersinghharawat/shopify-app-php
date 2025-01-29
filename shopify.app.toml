@@ -1,3 +1,28 @@
-# This file stores configurations for your Shopify app.
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-scopes = "write_products"
+client_id = "53e663bebcdd107c1b03a4810522730d"
+application_url = "https://meaning-portraits-gs-briefly.trycloudflare.com"
+embedded = true
+name = "Marg Product Sync"
+handle = "marg-product-sync"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "techbaytest.myshopify.com"
+
+[webhooks]
+api_version = "2024-10"
+
+[auth]
+redirect_urls = [
+  "https://meaning-portraits-gs-briefly.trycloudflare.com/auth/callback",
+  "https://meaning-portraits-gs-briefly.trycloudflare.com/auth/shopify/callback",
+  "https://meaning-portraits-gs-briefly.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false

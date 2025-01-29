@@ -1,9 +1,11 @@
 <?php
 
 use App\Exceptions\ShopifyProductCreatorException;
+use App\Http\Controllers\MargProductsController;
 use App\Lib\AuthRedirection;
 use App\Lib\EnsureBilling;
 use App\Lib\ProductCreator;
+use App\Models\MargProducts;
 use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -18,7 +20,6 @@ use Shopify\Exception\InvalidWebhookException;
 use Shopify\Utils;
 use Shopify\Webhooks\Registry;
 use Shopify\Webhooks\Topics;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -126,6 +127,42 @@ Route::post('/api/products', function (Request $request) {
     }
 })->middleware('shopify.auth');
 
+Route::get('/api/updateproduct', function (Request $request) {
+    /** @var AuthSession */
+    $session = $request->get('shopifySession');
+
+    $margProducts = MargProducts::all();
+
+    foreach ($margProducts as $margProduct) {
+        $id = $margProduct->ShopifyProductId;
+        $quantity = $margProduct->quantity;  // Assuming quantity is a field in the MargProducts table
+        $title = $margProduct->title;  // Assuming title is a field in the MargProducts table
+
+
+        try {
+            if(is_null($id)) {
+                continue;
+            }
+
+            if(is_null($quantity)) {
+                continue;
+            }
+
+            if(is_null($title)) {
+                continue;
+            }
+            ProductCreator::updateProduct($session, $id, $quantity, $title);
+        } catch (\Exception $e) {
+            Log::error("Failed to update product $id: " . $e->getMessage());
+        }
+    }
+    return response()->json(['success' => true, 'message' => 'Products updated successfully']);
+})->middleware('shopify.auth');
+
+
+
+
+
 Route::post('/api/webhooks', function (Request $request) {
     try {
         $topic = $request->header(HttpHeaders::X_SHOPIFY_TOPIC, '');
@@ -143,3 +180,15 @@ Route::post('/api/webhooks', function (Request $request) {
         return response()->json(['message' => "Got an exception when handling '$topic' webhook"], 500);
     }
 });
+
+
+
+Route::get('/api/products', function (Request $request) {
+    /** @var AuthSession */
+    $session = $request->get('shopifySession'); // Provided by the shopify.auth middleware, guaranteed to be active
+
+    $client = new Rest($session->getShop(), $session->getAccessToken());
+    $result = $client->get('products');
+
+    return response($result->getDecodedBody());
+})->middleware('shopify.auth');

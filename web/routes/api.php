@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MargProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return "Hello API";
 });
+
+Route::get('marg/products', [ MargProductsController::class, 'getProduct' ])->name('api.marg.products');
+
+Route::post('sync-product', [ MargProductsController::class, 'syncProduct' ])->name('api.syncproduct');
+
+Route::post('unsync-product', [ MargProductsController::class, 'unsyncProduct' ])->name('api.unsyncproduct');
+

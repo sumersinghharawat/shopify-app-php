@@ -46,6 +46,46 @@ class ProductCreator
         }
     }
 
+
+    public static function updateProduct(Session $session, int $id, int $quantity, string $title)
+    {
+        $client = new Graphql($session->getShop(), $session->getAccessToken());
+
+        $response = $client->query(
+            [
+                "query" => <<<'QUERY'
+                mutation updateProduct($input: ProductInput!) {
+                    productUpdate(input: $input) {
+                        product {
+                            id
+                        }
+                    }
+                }
+                QUERY,
+                "variables" => [
+                    "input" => [
+                        "id" => "gid://shopify/Product/".$id,
+                        "title" => $title,
+                        "inventoryQuantitiesAdjust" => [
+                            [
+                                "inventoryItemId" => "gid://shopify/InventoryItem/".$id,
+                                "availableDelta" => $quantity,
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        );
+
+        $body = HttpResponse::fromResponse($response)->getDecodedBody();
+
+        if ($response->getStatusCode() !== 200 || isset($body["errors"])) {
+            throw new ShopifyProductCreatorException($response->getBody()->__toString(), $response);
+        }
+
+        return $body;
+    }
+
     private static function randomTitle()
     {
         $adjective = self::ADJECTIVES[mt_rand(0, count(self::ADJECTIVES) - 1)];
